@@ -7,6 +7,7 @@ import com.sofka.accountservice.dto.CuentaRequest;
 import com.sofka.accountservice.exception.CuentaNotFoundException;
 import com.sofka.accountservice.exception.DuplicateCuentaException;
 import com.sofka.accountservice.exception.ReporteInvalidoException;
+import com.sofka.accountservice.exception.SaldoNoDisponibleException;
 import com.sofka.accountservice.repository.ClienteReferenciaRepository;
 import com.sofka.accountservice.repository.CuentaRepository;
 import com.sofka.accountservice.repository.MovimientoRepository;
@@ -70,7 +71,6 @@ public class CuentaService implements CuentaApplicationService {
         cuenta.setSaldoInicial(request.saldoInicial());
         cuenta.setEstado(request.estado());
         cuenta.setClienteId(request.clienteId());
-        cuenta.setClienteNombre(request.clienteNombre());
         sincronizarCliente(cuenta);
 
         recalcularSaldos(numeroCuenta);
@@ -92,6 +92,9 @@ public class CuentaService implements CuentaApplicationService {
         BigDecimal saldoActual = cuenta.getSaldoInicial();
         for (Movimiento movimiento : movimientos) {
             saldoActual = saldoActual.add(movimiento.getValor());
+            if (saldoActual.compareTo(BigDecimal.ZERO) < 0) {
+                throw new SaldoNoDisponibleException();
+            }
             movimiento.setSaldo(saldoActual);
         }
 

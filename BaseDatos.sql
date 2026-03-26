@@ -38,6 +38,7 @@ CREATE TABLE movimientos (
 
 CREATE INDEX idx_movimientos_numero_cuenta ON movimientos (numero_cuenta);
 CREATE INDEX idx_movimientos_fecha ON movimientos (fecha);
+CREATE INDEX idx_movimientos_cuenta_fecha_id ON movimientos (numero_cuenta, fecha, movimiento_id);
 
 INSERT INTO cuentas (
     numero_cuenta,

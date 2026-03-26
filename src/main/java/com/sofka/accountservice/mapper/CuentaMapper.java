@@ -13,6 +13,7 @@ public interface CuentaMapper {
 
     @Mapping(target = "saldoDisponible", ignore = true)
     @Mapping(target = "movimientos", ignore = true)
+    @Mapping(target = "clienteNombre", ignore = true)
     Cuenta toEntity(CuentaRequest request);
 
     CuentaResponse toResponse(Cuenta cuenta);
@@ -20,5 +21,6 @@ public interface CuentaMapper {
     @AfterMapping
     default void setSaldoDisponible(@MappingTarget Cuenta cuenta, CuentaRequest request) {
         cuenta.setSaldoDisponible(request.saldoInicial());
+        cuenta.setClienteNombre("");
     }
 }

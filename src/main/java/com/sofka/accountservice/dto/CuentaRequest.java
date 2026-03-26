@@ -24,10 +24,6 @@ public record CuentaRequest(
         Boolean estado,
         @Schema(description = "Identificador del cliente asociado", example = "2")
         @NotNull(message = "clienteId es obligatorio")
-        Long clienteId,
-        @Schema(description = "Nombre del cliente asociado. Se sincroniza con el evento del microservicio de clientes", example = "Marianela Montalvo")
-        @NotBlank(message = "clienteNombre es obligatorio")
-        @Size(max = 100, message = "clienteNombre no puede superar 100 caracteres")
-        String clienteNombre
+        Long clienteId
 ) {
 }

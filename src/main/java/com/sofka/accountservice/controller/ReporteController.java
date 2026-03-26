@@ -1,6 +1,6 @@
 package com.sofka.accountservice.controller;
 
-import com.sofka.accountservice.dto.ReporteEstadoCuentaResponse;
+import com.sofka.accountservice.dto.ReporteCuentaResponse;
 import com.sofka.accountservice.service.ReporteApplicationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -36,7 +36,7 @@ public class ReporteController {
             @ApiResponse(responseCode = "400", description = "Parametros invalidos", content = @Content(schema = @Schema(implementation = com.sofka.accountservice.exception.ApiError.class),
                     examples = @ExampleObject(value = "{\"code\":\"REPORTE_INVALIDO\",\"message\":\"fechaDesde no puede ser mayor que fechaHasta\"}")))
     })
-    public ResponseEntity<List<ReporteEstadoCuentaResponse>> generar(
+    public ResponseEntity<List<ReporteCuentaResponse>> generar(
             @Parameter(description = "Fecha inicial del reporte", example = "2022-02-08") @RequestParam("fechaDesde") LocalDate fechaDesde,
             @Parameter(description = "Fecha final del reporte", example = "2022-02-10") @RequestParam("fechaHasta") LocalDate fechaHasta,
             @Parameter(description = "clienteId sobre el cual consultar el reporte", example = "2") @RequestParam("clienteId") Long clienteId

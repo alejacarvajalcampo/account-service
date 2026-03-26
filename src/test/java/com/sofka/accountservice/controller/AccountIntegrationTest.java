@@ -37,8 +37,7 @@ class AccountIntegrationTest {
                   "tipoCuenta": "Corriente",
                   "saldoInicial": 1000.00,
                   "estado": true,
-                  "clienteId": 1,
-                  "clienteNombre": "Jose Lema"
+                  "clienteId": 1
                 }
                 """;
 
@@ -60,8 +59,7 @@ class AccountIntegrationTest {
                   "tipoCuenta": "Corriente",
                   "saldoInicial": 100.00,
                   "estado": true,
-                  "clienteId": 2,
-                  "clienteNombre": "Marianela Montalvo"
+                  "clienteId": 2
                 }
                 """;
 
@@ -89,7 +87,8 @@ class AccountIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].cliente").value("Marianela Montalvo"))
-                .andExpect(jsonPath("$[0].saldoDisponible").value(700.00));
+                .andExpect(jsonPath("$[0].movimientos", hasSize(1)))
+                .andExpect(jsonPath("$[0].movimientos[0].saldoDisponible").value(700.00));
     }
 
     private void guardarClienteReferencia(Long clienteId, String nombre, String identificacion) {

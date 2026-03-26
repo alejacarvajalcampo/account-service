@@ -4,12 +4,7 @@ import com.sofka.accountservice.domain.Cuenta;
 import com.sofka.accountservice.domain.Movimiento;
 import com.sofka.accountservice.dto.MovimientoRequest;
 import com.sofka.accountservice.exception.MovimientoNotFoundException;
-import com.sofka.accountservice.exception.SaldoNoDisponibleException;
 import com.sofka.accountservice.repository.MovimientoRepository;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -36,9 +31,8 @@ public class MovimientoService implements MovimientoApplicationService {
         movimiento.setTipoMovimiento(request.tipoMovimiento());
         movimiento.setValor(request.valor());
         movimiento.setCuenta(cuenta);
-        movimiento.setSaldo(BigDecimal.ZERO);
+        movimiento.setSaldo(cuenta.getSaldoDisponible());
 
-        validarSaldoDisponible(cuenta, movimiento, null);
         Movimiento saved = movimientoRepository.save(movimiento);
         cuentaService.recalcularSaldos(cuenta.getNumeroCuenta());
         return movimientoRepository.findById(saved.getMovimientoId())
@@ -70,7 +64,6 @@ public class MovimientoService implements MovimientoApplicationService {
         movimiento.setValor(request.valor());
         movimiento.setCuenta(cuentaNueva);
 
-        validarSaldoDisponible(cuentaNueva, movimiento, movimientoId);
         movimientoRepository.save(movimiento);
         cuentaService.recalcularSaldos(cuentaNueva.getNumeroCuenta());
         if (!cuentaAnterior.equals(cuentaNueva.getNumeroCuenta())) {
@@ -87,28 +80,5 @@ public class MovimientoService implements MovimientoApplicationService {
         Long numeroCuenta = movimiento.getCuenta().getNumeroCuenta();
         movimientoRepository.delete(movimiento);
         cuentaService.recalcularSaldos(numeroCuenta);
-    }
-
-    private void validarSaldoDisponible(Cuenta cuenta, Movimiento candidato, Long movimientoIdActual) {
-        List<Movimiento> simulacion = new ArrayList<>(
-                movimientoRepository.findByCuentaNumeroCuentaOrderByFechaAscMovimientoIdAsc(cuenta.getNumeroCuenta())
-        );
-
-        if (movimientoIdActual != null) {
-            simulacion.removeIf(item -> item.getMovimientoId().equals(movimientoIdActual));
-        }
-        simulacion.add(candidato);
-        simulacion.sort(
-                Comparator.comparing(Movimiento::getFecha)
-                        .thenComparing(item -> item.getMovimientoId() == null ? Long.MAX_VALUE : item.getMovimientoId())
-        );
-
-        BigDecimal saldoActual = cuenta.getSaldoInicial();
-        for (Movimiento movimiento : simulacion) {
-            saldoActual = saldoActual.add(movimiento.getValor());
-            if (saldoActual.compareTo(BigDecimal.ZERO) < 0) {
-                throw new SaldoNoDisponibleException();
-            }
-        }
     }
 }

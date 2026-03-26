@@ -15,7 +15,7 @@ public class ClienteEventListener {
         this.clienteReferenciaRepository = clienteReferenciaRepository;
     }
 
-    @RabbitListener(queues = RabbitMqConfig.CUSTOMER_QUEUE)
+    @RabbitListener(queues = RabbitMqConfig.CUSTOMER_QUEUE, containerFactory = "customerSyncListenerContainerFactory")
     public void onClienteEvent(ClienteEvent event) {
         if ("CLIENTE_DELETE".equals(event.eventType())) {
             clienteReferenciaRepository.deleteById(event.clienteId());

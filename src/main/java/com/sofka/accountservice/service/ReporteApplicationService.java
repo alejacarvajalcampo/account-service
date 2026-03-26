@@ -1,10 +1,10 @@
 package com.sofka.accountservice.service;
 
-import com.sofka.accountservice.dto.ReporteEstadoCuentaResponse;
+import com.sofka.accountservice.dto.ReporteCuentaResponse;
 import java.time.LocalDate;
 import java.util.List;
 
 public interface ReporteApplicationService {
 
-    List<ReporteEstadoCuentaResponse> generarReporte(LocalDate fechaDesde, LocalDate fechaHasta, Long clienteId);
+    List<ReporteCuentaResponse> generarReporte(LocalDate fechaDesde, LocalDate fechaHasta, Long clienteId);
 }
