@@ -8,7 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sofka.accountservice.repository.ClienteReferenciaRepository;
-import com.sofka.accountservice.support.ClienteReferenciaTestDataBuilder;
+import com.sofka.accountservice.soporte.ClienteReferenciaPruebaBuilder;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +33,9 @@ class AccountIntegrationTest {
     private ObjectMapper objectMapper;
 
     @Test
-    void shouldCreateCuenta() throws Exception {
+    void deberiaCrearCuenta() throws Exception {
         guardarClienteReferencia(
-                ClienteReferenciaTestDataBuilder.unClienteReferencia().build()
+                ClienteReferenciaPruebaBuilder.unClienteReferencia().construir()
         );
 
         String body = objectMapper.writeValueAsString(Map.of(
@@ -55,13 +55,13 @@ class AccountIntegrationTest {
     }
 
     @Test
-    void shouldGenerateReporteByClienteAndFecha() throws Exception {
+    void deberiaGenerarReportePorClienteYFecha() throws Exception {
         guardarClienteReferencia(
-                ClienteReferenciaTestDataBuilder.unClienteReferencia()
+                ClienteReferenciaPruebaBuilder.unClienteReferencia()
                         .conClienteId(2L)
                         .conNombre("Marianela Montalvo")
                         .conIdentificacion("9876543210")
-                        .build()
+                        .construir()
         );
 
         String cuentaBody = objectMapper.writeValueAsString(Map.of(

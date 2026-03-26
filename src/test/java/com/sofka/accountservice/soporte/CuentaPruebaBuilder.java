@@ -1,9 +1,9 @@
-package com.sofka.accountservice.support;
+package com.sofka.accountservice.soporte;
 
 import com.sofka.accountservice.domain.Cuenta;
 import java.math.BigDecimal;
 
-public class CuentaTestDataBuilder {
+public class CuentaPruebaBuilder {
 
     private Long numeroCuenta = 900001L;
     private String tipoCuenta = "Ahorro";
@@ -13,41 +13,41 @@ public class CuentaTestDataBuilder {
     private Long clienteId = 99L;
     private String clienteNombre = "Cliente Prueba";
 
-    public static CuentaTestDataBuilder unaCuenta() {
-        return new CuentaTestDataBuilder();
+    public static CuentaPruebaBuilder unaCuenta() {
+        return new CuentaPruebaBuilder();
     }
 
-    public CuentaTestDataBuilder conNumeroCuenta(Long numeroCuenta) {
+    public CuentaPruebaBuilder conNumeroCuenta(Long numeroCuenta) {
         this.numeroCuenta = numeroCuenta;
         return this;
     }
 
-    public CuentaTestDataBuilder conTipoCuenta(String tipoCuenta) {
+    public CuentaPruebaBuilder conTipoCuenta(String tipoCuenta) {
         this.tipoCuenta = tipoCuenta;
         return this;
     }
 
-    public CuentaTestDataBuilder conSaldoInicial(BigDecimal saldoInicial) {
+    public CuentaPruebaBuilder conSaldoInicial(BigDecimal saldoInicial) {
         this.saldoInicial = saldoInicial;
         return this;
     }
 
-    public CuentaTestDataBuilder conSaldoDisponible(BigDecimal saldoDisponible) {
+    public CuentaPruebaBuilder conSaldoDisponible(BigDecimal saldoDisponible) {
         this.saldoDisponible = saldoDisponible;
         return this;
     }
 
-    public CuentaTestDataBuilder conClienteId(Long clienteId) {
+    public CuentaPruebaBuilder conClienteId(Long clienteId) {
         this.clienteId = clienteId;
         return this;
     }
 
-    public CuentaTestDataBuilder conClienteNombre(String clienteNombre) {
+    public CuentaPruebaBuilder conClienteNombre(String clienteNombre) {
         this.clienteNombre = clienteNombre;
         return this;
     }
 
-    public Cuenta build() {
+    public Cuenta construir() {
         Cuenta cuenta = new Cuenta();
         cuenta.setNumeroCuenta(numeroCuenta);
         cuenta.setTipoCuenta(tipoCuenta);

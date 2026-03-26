@@ -1,34 +1,34 @@
-package com.sofka.accountservice.support;
+package com.sofka.accountservice.soporte;
 
 import com.sofka.accountservice.domain.ClienteReferencia;
 
-public class ClienteReferenciaTestDataBuilder {
+public class ClienteReferenciaPruebaBuilder {
 
     private Long clienteId = 1L;
     private String nombre = "Jose Lema";
     private String identificacion = "1234567890";
     private Boolean estado = true;
 
-    public static ClienteReferenciaTestDataBuilder unClienteReferencia() {
-        return new ClienteReferenciaTestDataBuilder();
+    public static ClienteReferenciaPruebaBuilder unClienteReferencia() {
+        return new ClienteReferenciaPruebaBuilder();
     }
 
-    public ClienteReferenciaTestDataBuilder conClienteId(Long clienteId) {
+    public ClienteReferenciaPruebaBuilder conClienteId(Long clienteId) {
         this.clienteId = clienteId;
         return this;
     }
 
-    public ClienteReferenciaTestDataBuilder conNombre(String nombre) {
+    public ClienteReferenciaPruebaBuilder conNombre(String nombre) {
         this.nombre = nombre;
         return this;
     }
 
-    public ClienteReferenciaTestDataBuilder conIdentificacion(String identificacion) {
+    public ClienteReferenciaPruebaBuilder conIdentificacion(String identificacion) {
         this.identificacion = identificacion;
         return this;
     }
 
-    public ClienteReferencia build() {
+    public ClienteReferencia construir() {
         ClienteReferencia cliente = new ClienteReferencia();
         cliente.setClienteId(clienteId);
         cliente.setNombre(nombre);

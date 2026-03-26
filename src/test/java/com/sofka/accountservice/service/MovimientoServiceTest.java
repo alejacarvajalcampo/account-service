@@ -7,8 +7,8 @@ import com.sofka.accountservice.domain.Cuenta;
 import com.sofka.accountservice.dto.MovimientoRequest;
 import com.sofka.accountservice.exception.SaldoNoDisponibleException;
 import com.sofka.accountservice.repository.CuentaRepository;
-import com.sofka.accountservice.support.CuentaTestDataBuilder;
-import com.sofka.accountservice.support.MovimientoRequestTestDataBuilder;
+import com.sofka.accountservice.soporte.CuentaPruebaBuilder;
+import com.sofka.accountservice.soporte.MovimientoRequestPruebaBuilder;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,32 +28,32 @@ class MovimientoServiceTest {
     private CuentaRepository cuentaRepository;
 
     @Test
-    void shouldRejectWithdrawalWhenBalanceIsInsufficient() {
-        Cuenta cuenta = CuentaTestDataBuilder.unaCuenta().build();
+    void deberiaRechazarRetiroCuandoElSaldoEsInsuficiente() {
+        Cuenta cuenta = CuentaPruebaBuilder.unaCuenta().construir();
         cuentaRepository.save(cuenta);
 
-        MovimientoRequest request = MovimientoRequestTestDataBuilder.unMovimiento()
+        MovimientoRequest request = MovimientoRequestPruebaBuilder.unMovimiento()
                 .conTipoMovimiento("RETIRO")
                 .conValor(new BigDecimal("-3000.00"))
                 .conNumeroCuenta(900001L)
-                .build();
+                .construir();
 
         assertThrows(SaldoNoDisponibleException.class, () -> movimientoService.crear(request));
     }
 
     @Test
-    void shouldUpdateAvailableBalanceAfterDeposit() {
-        Cuenta cuenta = CuentaTestDataBuilder.unaCuenta()
+    void deberiaActualizarSaldoDisponibleDespuesDeUnDeposito() {
+        Cuenta cuenta = CuentaPruebaBuilder.unaCuenta()
                 .conNumeroCuenta(900002L)
                 .conTipoCuenta("Corriente")
                 .conClienteId(98L)
                 .conClienteNombre("Cliente Dos")
-                .build();
+                .construir();
         cuentaRepository.save(cuenta);
 
-        MovimientoRequest request = MovimientoRequestTestDataBuilder.unMovimiento()
+        MovimientoRequest request = MovimientoRequestPruebaBuilder.unMovimiento()
                 .conNumeroCuenta(900002L)
-                .build();
+                .construir();
 
         movimientoService.crear(request);
         Cuenta actualizada = cuentaRepository.findById(900002L).orElseThrow();
