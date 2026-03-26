@@ -6,8 +6,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.sofka.accountservice.domain.ClienteReferencia;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sofka.accountservice.repository.ClienteReferenciaRepository;
+import com.sofka.accountservice.support.ClienteReferenciaTestDataBuilder;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -27,19 +29,22 @@ class AccountIntegrationTest {
     @Autowired
     private ClienteReferenciaRepository clienteReferenciaRepository;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Test
     void shouldCreateCuenta() throws Exception {
-        guardarClienteReferencia(1L, "Jose Lema", "1234567890");
+        guardarClienteReferencia(
+                ClienteReferenciaTestDataBuilder.unClienteReferencia().build()
+        );
 
-        String body = """
-                {
-                  "numeroCuenta": 585545,
-                  "tipoCuenta": "Corriente",
-                  "saldoInicial": 1000.00,
-                  "estado": true,
-                  "clienteId": 1
-                }
-                """;
+        String body = objectMapper.writeValueAsString(Map.of(
+                "numeroCuenta", 585545,
+                "tipoCuenta", "Corriente",
+                "saldoInicial", 1000.00,
+                "estado", true,
+                "clienteId", 1
+        ));
 
         mockMvc.perform(post("/cuentas")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -51,26 +56,28 @@ class AccountIntegrationTest {
 
     @Test
     void shouldGenerateReporteByClienteAndFecha() throws Exception {
-        guardarClienteReferencia(2L, "Marianela Montalvo", "9876543210");
+        guardarClienteReferencia(
+                ClienteReferenciaTestDataBuilder.unClienteReferencia()
+                        .conClienteId(2L)
+                        .conNombre("Marianela Montalvo")
+                        .conIdentificacion("9876543210")
+                        .build()
+        );
 
-        String cuentaBody = """
-                {
-                  "numeroCuenta": 225487,
-                  "tipoCuenta": "Corriente",
-                  "saldoInicial": 100.00,
-                  "estado": true,
-                  "clienteId": 2
-                }
-                """;
+        String cuentaBody = objectMapper.writeValueAsString(Map.of(
+                "numeroCuenta", 225487,
+                "tipoCuenta", "Corriente",
+                "saldoInicial", 100.00,
+                "estado", true,
+                "clienteId", 2
+        ));
 
-        String movimientoBody = """
-                {
-                  "fecha": "2022-02-10",
-                  "tipoMovimiento": "DEPOSITO",
-                  "valor": 600.00,
-                  "numeroCuenta": 225487
-                }
-                """;
+        String movimientoBody = objectMapper.writeValueAsString(Map.of(
+                "fecha", "2022-02-10",
+                "tipoMovimiento", "DEPOSITO",
+                "valor", 600.00,
+                "numeroCuenta", 225487
+        ));
 
         mockMvc.perform(post("/cuentas")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -91,12 +98,7 @@ class AccountIntegrationTest {
                 .andExpect(jsonPath("$[0].movimientos[0].saldoDisponible").value(700.00));
     }
 
-    private void guardarClienteReferencia(Long clienteId, String nombre, String identificacion) {
-        ClienteReferencia cliente = new ClienteReferencia();
-        cliente.setClienteId(clienteId);
-        cliente.setNombre(nombre);
-        cliente.setIdentificacion(identificacion);
-        cliente.setEstado(true);
+    private void guardarClienteReferencia(com.sofka.accountservice.domain.ClienteReferencia cliente) {
         clienteReferenciaRepository.save(cliente);
     }
 }

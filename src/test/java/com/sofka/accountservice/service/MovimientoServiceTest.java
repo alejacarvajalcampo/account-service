@@ -7,8 +7,9 @@ import com.sofka.accountservice.domain.Cuenta;
 import com.sofka.accountservice.dto.MovimientoRequest;
 import com.sofka.accountservice.exception.SaldoNoDisponibleException;
 import com.sofka.accountservice.repository.CuentaRepository;
+import com.sofka.accountservice.support.CuentaTestDataBuilder;
+import com.sofka.accountservice.support.MovimientoRequestTestDataBuilder;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,44 +29,31 @@ class MovimientoServiceTest {
 
     @Test
     void shouldRejectWithdrawalWhenBalanceIsInsufficient() {
-        Cuenta cuenta = new Cuenta();
-        cuenta.setNumeroCuenta(900001L);
-        cuenta.setTipoCuenta("Ahorro");
-        cuenta.setSaldoInicial(new BigDecimal("100.00"));
-        cuenta.setSaldoDisponible(new BigDecimal("100.00"));
-        cuenta.setEstado(true);
-        cuenta.setClienteId(99L);
-        cuenta.setClienteNombre("Cliente Prueba");
+        Cuenta cuenta = CuentaTestDataBuilder.unaCuenta().build();
         cuentaRepository.save(cuenta);
 
-        MovimientoRequest request = new MovimientoRequest(
-                LocalDate.of(2022, 2, 12),
-                "RETIRO",
-                new BigDecimal("-3000.00"),
-                900001L
-        );
+        MovimientoRequest request = MovimientoRequestTestDataBuilder.unMovimiento()
+                .conTipoMovimiento("RETIRO")
+                .conValor(new BigDecimal("-3000.00"))
+                .conNumeroCuenta(900001L)
+                .build();
 
         assertThrows(SaldoNoDisponibleException.class, () -> movimientoService.crear(request));
     }
 
     @Test
     void shouldUpdateAvailableBalanceAfterDeposit() {
-        Cuenta cuenta = new Cuenta();
-        cuenta.setNumeroCuenta(900002L);
-        cuenta.setTipoCuenta("Corriente");
-        cuenta.setSaldoInicial(new BigDecimal("100.00"));
-        cuenta.setSaldoDisponible(new BigDecimal("100.00"));
-        cuenta.setEstado(true);
-        cuenta.setClienteId(98L);
-        cuenta.setClienteNombre("Cliente Dos");
+        Cuenta cuenta = CuentaTestDataBuilder.unaCuenta()
+                .conNumeroCuenta(900002L)
+                .conTipoCuenta("Corriente")
+                .conClienteId(98L)
+                .conClienteNombre("Cliente Dos")
+                .build();
         cuentaRepository.save(cuenta);
 
-        MovimientoRequest request = new MovimientoRequest(
-                LocalDate.of(2022, 2, 12),
-                "DEPOSITO",
-                new BigDecimal("200.00"),
-                900002L
-        );
+        MovimientoRequest request = MovimientoRequestTestDataBuilder.unMovimiento()
+                .conNumeroCuenta(900002L)
+                .build();
 
         movimientoService.crear(request);
         Cuenta actualizada = cuentaRepository.findById(900002L).orElseThrow();
